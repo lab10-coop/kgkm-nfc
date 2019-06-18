@@ -1,7 +1,5 @@
-const Tx = require('ethereumjs-tx');
-const Util = require('ethereumjs-util');
 const Web3 = require('web3');
-const s2go = require('./wrapper');
+const web3s2g = require('./web3-s2g.js');
 
 let log_debug_signing = true;
 
@@ -11,83 +9,6 @@ function toHex(nonHex, prefix = true) {
     temp = `0x${temp}`;
   }
   return temp;
-}
-
-
-async function sign(web3, rawTx, secondTx) {
-  const wrapper = new s2go.security2goWrapper();
-  const publickey = await wrapper.getPublicKey(1);
-  logSigning('publickey');
-  logSigning(publickey);
-
-
-  // get address from publickey
-  let address = '0x' + web3.utils.sha3('0x' + publickey).slice(26);
-  logSigning('address');
-  logSigning(address);
-
-  if (!secondTx) {
-    rawTx.nonce = await web3.eth.getTransactionCount(address);
-  } else {
-    rawTx.nonce = (await web3.eth.getTransactionCount(address)) + 1;
-  }
-  // todo: is the nonce in 0x hex format?
-  logSigning('rawTx.nonce');
-  logSigning(rawTx.nonce);
-
-  const tx = new Tx(rawTx);
-  //tx.sign(privateKey);
-
-  const hash = toHex(tx.hash(false), false);
-  logSigning('hash');
-  logSigning(hash);
-
-
-  let serializedTx = '';
-  let i = 0;
-  do {
-    logSigning('tries to generate signature.');
-
-    const cardSig = await wrapper.generateSignature(1, hash.toString('hex'));
-    logSigning('cardSig');
-    logSigning(cardSig);
-
-    let rStart = 6;
-    let length = 2;
-    const rLength = parseInt(cardSig.slice(rStart, rStart + length), 16);
-    logSigning('rLength');
-    logSigning(rLength);
-    rStart += 2;
-    const r = cardSig.slice(rStart, rStart + rLength * 2);
-    logSigning('r');
-    logSigning(r);
-
-    let sStart = rStart + rLength * 2 + 2;
-    const sLength = parseInt(cardSig.slice(sStart, sStart + length), 16);
-    logSigning('sLength');
-    logSigning(sLength);
-    sStart += 2;
-    const s = cardSig.slice(sStart, sStart + sLength * 2);
-    logSigning('s');
-    logSigning(s);
-
-    rawTx.r = '0x' + r;
-    rawTx.s = '0x' + s;
-
-    const tx2 = new Tx(rawTx);
-    //logSigning(tx2);
-
-    serializedTx = tx2.serialize();
-    logSigning('serializedTx');
-    logSigning(toHex(serializedTx));
-    logSigning(web3.eth.accounts.recoverTransaction(toHex(serializedTx)));
-
-    i += 1;
-  } while (web3.eth.accounts.recoverTransaction(toHex(serializedTx)).toLocaleLowerCase() !== address);
-
-  console.log(`trys: ${i}`);
-
-  return toHex(serializedTx);
 }
 
 const web3 = new Web3('wss://ws.sigma1.artis.network');
@@ -115,12 +36,18 @@ let txOpen = null;
 let txClose = null;
 
 
-async function putCard() {
+async function putCard(reader) {
+
+
   logSigning('putCard');
   // create both transactions
 
-  txOpen = await sign(web3, rawTxOpen);
-  txClose = await sign(web3, rawTxClose, true);
+  var card = new web3s2g.Security2GoCard(reader);
+ 
+  var closeNonce = await web3.eth.getTransactionCount(await card.getAddress(1));
+
+  txOpen = await card.signTransaction(web3,rawTxOpen, 1);
+  txClose =  await card.signTransaction(web3,rawTxClose, 1, closeNonce + 1);
 
   //console.log(txClose);
   // send open
@@ -131,8 +58,8 @@ function takeCard() {
 
   if (txClose != null) {
     console.log('takeCard');
-  // send close
-  sendSignedTransaction(txClose);
+    // send close
+    sendSignedTransaction(txClose);
   }
 }
 
@@ -146,8 +73,6 @@ async function sendSignedTransaction(tx) {
     console.log('caught exception: ' + error);
   }
   
-  
-  
   //todo: handle errors, and pseudo errors in a better way.
 }
 
@@ -156,18 +81,6 @@ function logSigning(message) {
     console.log(message)
   }
 }
-
-async function start() {
-  await putCard();
-  await takeCard();
-
-  //const tx = await sign(web3, rawTxOpen);
-  //const tx = await sign(web3, rawTxClose);
-  //await web3.eth.sendSignedTransaction(tx).on('receipt', console.log);
-}
-
-//start();
-
 
 module.exports = {
   takeCard,

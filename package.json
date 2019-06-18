@@ -24,9 +24,7 @@
   },
   "homepage": "https://github.com/SurfingNerd/security2go-js-wrapper#readme",
   "dependencies": {
-    "ethereumjs-tx": "^1.3.7",
-    "ethereumjs-util": "^6.1.0",
     "pcsclite": "^0.6.0",
-    "web3": "^1.0.0-beta.50"
+    "web3": "^1.0.0-beta.55"
   }
 }

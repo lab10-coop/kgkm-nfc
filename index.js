@@ -54,8 +54,7 @@ pcsc.on('reader', function(reader) {
             
                 lastStateWasCard = true;
                 console.log('putting card');
-                sign.putCard() ;
-
+                sign.putCard(reader);
             }
         }
     });
