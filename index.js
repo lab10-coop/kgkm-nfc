@@ -1,6 +1,5 @@
 
 var pcsc = require('pcsclite');
-var wrapper = require('./wrapper');
 const sign = require('./sign');
 
 // testcode: runable with "node ."
