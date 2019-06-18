@@ -1,6 +1,6 @@
 # kgkm-nfc
 
-"Ka Göd ka Musi" was die winning project of the 24 Hour Infineon Blockchain Hackaton.
+"Ka Göd ka Musi" was die winning project of the 24 Hour Infineon Blockchain Hackathon.
 
 https://www.youtube.com/watch?v=TqVXTohUEpI
 
