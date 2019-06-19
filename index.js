@@ -117,6 +117,8 @@ pcsc.on('reader', function(reader) {
 
     reader.on('end', function() {
         console.log('Reader',  this.name, 'removed');
+        switchPortOff(3);
+        switchPortOff(4);
     });
 });
 
