@@ -52,6 +52,7 @@ async function verifyReader() {
     // so we don't shut off the signal port 4 and 1 ms later set it on since a reader has been detected. 
 
     //await delay(10000);
+    console.log('booting up, switching off ports');
     switchPortOff(3);
     switchPortOff(4);
 
@@ -75,14 +76,6 @@ pcsc.on('reader', function(reader) {
     lastDetectedReader = reader;
 
     console.log('New reader detected', reader.name);
-
-    async function signalReaderReady() {
-        try {
-            await exec(`sispmctl -o 4`);
-        } catch(error) {
-            console.log('Error during deactivating Status flag:', error);
-        }
-    }
 
     switchPortOn(4);
 
