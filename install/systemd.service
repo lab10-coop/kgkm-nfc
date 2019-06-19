@@ -6,7 +6,6 @@ After=pcscd.service
 After=multi-user.target
 
 [Service]
-User=pi
 ExecStart=/usr/local/bin/node /home/pi/security2go-js-wrapper/index.js
 Restart=always
 RestartSec=10

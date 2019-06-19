@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/SurfingNerd/security2go-js-wrapper#readme",
   "dependencies": {
-    "pcsclite": "^0.6.0",
+    "@pokusew/pcsclite": "^0.5.2",
+    "child_process": "^1.0.2",
     "web3": "^1.0.0-beta.55"
   }
 }
