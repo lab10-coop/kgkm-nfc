@@ -15,7 +15,7 @@ const web3 = new Web3('wss://ws.sigma1.artis.network');
 
 const rawTxOpen = {
  // nonce: '0x00',
-  gasPrice: 1000000000,
+  gasPrice: 100000000000,
   to: '0xE53BA69C94b657838B2b22B9BC609163cC34512f',
   value: 0,
   data: '0x0905186e00000000000000000000000001019e15b7beef611ac4659e7acdc272c4d90afa00000000000000000000000000000000000000000000000000000a86cc92e3da',
@@ -24,7 +24,7 @@ const rawTxOpen = {
 
 const rawTxClose = {
  // nonce: '0x00',
-  gasPrice: 1000000000,
+  gasPrice: 100000000000,
   to: '0xE53BA69C94b657838B2b22B9BC609163cC34512f',
   value: 0,
   data: '0x9abe837900000000000000000000000001019e15b7beef611ac4659e7acdc272c4d90afa',

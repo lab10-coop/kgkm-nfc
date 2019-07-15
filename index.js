@@ -102,7 +102,7 @@ pcsc.on('reader', function(reader) {
                         console.log(err);
                     } else {
                         console.log('Disconnected');
-                    }        
+                    }
                     sign.takeCard();
                 });
             } else if (!lastStateWasCard && (changes & reader.SCARD_STATE_PRESENT) && (status.state & reader.SCARD_STATE_PRESENT)) {
