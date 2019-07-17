@@ -82,7 +82,13 @@ function logSigning(message) {
   }
 }
 
+async function getLatestBlockNumber() {
+  return web3.eth.getBlockNumber();
+
+}
+
 module.exports = {
   takeCard,
-  putCard
+  putCard,
+  getLatestBlockNumber
 }

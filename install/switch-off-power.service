@@ -1,0 +1,14 @@
+[Unit]
+Description=Switches all power ports off on reboot.
+Requires=systemd-udevd.service
+After=systemd-udevd.service
+
+[Service]
+ExecStart=/usr/bin/sispmctl -f all
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=switch-off-power
+
+[Install]
+WantedBy=multi-user.target

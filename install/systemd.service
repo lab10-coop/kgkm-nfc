@@ -7,6 +7,7 @@ After=multi-user.target
 
 [Service]
 ExecStart=/usr/local/bin/node /home/pi/security2go-js-wrapper/index.js
+ExecStop=/usr/bin/sispmctl -f all
 Restart=always
 RestartSec=10
 StandardOutput=syslog

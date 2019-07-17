@@ -21,7 +21,6 @@ const exec = util.promisify(require('child_process').exec);
 
 var pcsc = pcsc();
 
-
 //const SCARD_STATE_EMPTY = ;
 var lastStateWasCard = false;
 
@@ -47,11 +46,9 @@ async function switchPortOff(portNumber) {
 
 async function verifyReader() {
 
-    
     //it could make sense to wait a few milliseconds here,
     // so we don't shut off the signal port 4 and 1 ms later set it on since a reader has been detected. 
 
-    //await delay(10000);
     console.log('booting up, switching off ports');
     switchPortOff(3);
     switchPortOff(4);
@@ -69,7 +66,21 @@ async function verifyReader() {
     }
 }
 
+async function updateBlockchainAvailableStatus() {
+
+    try {
+        const latestBlockNumber = await sign.getLatestBlockNumber();
+        console.log(`latestBlockNumber: ${latestBlockNumber}`);
+        switchPortOn(2);
+    } catch (error) {
+        console.log('error trying to get latestBlock, could not interact with blockchain.');
+        switchPortOff(2);
+    }
+}
+
 verifyReader();
+updateBlockchainAvailableStatus();
+
 
 pcsc.on('reader', function(reader) {
 
