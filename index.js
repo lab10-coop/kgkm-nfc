@@ -28,6 +28,8 @@ let lastStateWasCard = false;
 
 let lastDetectedReader = false;
 
+let isShuttingDown = false;
+
 //this are known cards to shut down the system.
 const terminatorCards = {
     "0x756269ce7e0285670ecbd234f230645efba049d3" : true
@@ -37,6 +39,10 @@ const terminatorCards = {
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 async function switchPortOn(portNumber) {
+    if (isShuttingDown) {
+        //we do not like to switch any port on in the case we are allready about to shut down.
+        return;
+    }
     try {
         await exec(`sispmctl -o ${portNumber}`);
     } catch(error) {
@@ -76,6 +82,7 @@ async function verifyReader() {
 
 async function shutdownComputer() {
     try {
+        isShuttingDown = true;
         console.log('shutting down machine');
         await exec(`shutdown --poweroff`);
     } catch(error) {
