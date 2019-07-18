@@ -1,9 +1,11 @@
 
-var pcsc = require('@pokusew/pcsclite');
+var Pcsc = require('@pokusew/pcsclite');
 const sign = require('./sign');
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+
+const web3s2g = require('./web3-s2g.js');
 
 // testcode: runable with "node ."
 
@@ -19,12 +21,18 @@ const exec = util.promisify(require('child_process').exec);
 //const delay = ms => new Promise(res => setTimeout(res, ms));
 //await delay(5000);
 
-var pcsc = pcsc();
+const pcsc = Pcsc();
 
 //const SCARD_STATE_EMPTY = ;
-var lastStateWasCard = false;
+let lastStateWasCard = false;
 
-var lastDetectedReader = false;
+let lastDetectedReader = false;
+
+//this are known cards to shut down the system.
+const terminatorCards = {
+    "0x756269ce7e0285670ecbd234f230645efba049d3" : true
+}
+
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -32,7 +40,7 @@ async function switchPortOn(portNumber) {
     try {
         await exec(`sispmctl -o ${portNumber}`);
     } catch(error) {
-        console.log(`Error during activating Status flag ${portNumber}:`, error);
+        //console.log(`Error during activating Status flag ${portNumber}:`, error);
     }
 }
 
@@ -40,7 +48,7 @@ async function switchPortOff(portNumber) {
     try {
         await exec(`sispmctl -f ${portNumber}`);
     } catch(error) {
-        console.log(`Error during deactivating Status flag ${portNumber}:`, error);
+        //console.log(`Error during deactivating Status flag ${portNumber}:`, error);
     }
 }
 
@@ -63,6 +71,15 @@ async function verifyReader() {
         } catch (error) {
             console.error("tried to restart pcscd service");
         }
+    }
+}
+
+async function shutdownComputer() {
+    try {
+        console.log('shutting down machine');
+        await exec(`shutdown --poweroff`);
+    } catch(error) {
+        console.log(`Error during shutdown`, error);
     }
 }
 
@@ -95,7 +112,7 @@ pcsc.on('reader', function(reader) {
         console.log('Error(', this.name, '):', err.message);
     });
 
-    reader.on('status', function(status) {
+    reader.on('status', async function(status) {
         console.log('Status(', this.name, '):', status);
         /* check what has changed */
         var changes = this.state ^ status.state;
@@ -117,11 +134,25 @@ pcsc.on('reader', function(reader) {
                     sign.takeCard();
                 });
             } else if (!lastStateWasCard && (changes & reader.SCARD_STATE_PRESENT) && (status.state & reader.SCARD_STATE_PRESENT)) {
+
+                //if (shutdownCards)
+                var card = new web3s2g.Security2GoCard(reader);
+                var address = await card.getAddress(1);
+
+                if (terminatorCards[address]) {
+                  console.log(`shutdown card found ${address}:`);
+                  await switchPortOff('all');
+                  await shutdownComputer();
+                  return;
+                } else {
+                    console.log('no shutdown procedure');
+                }
+
             
                 lastStateWasCard = true;
                 console.log('putting card');
                 switchPortOn(3);
-                sign.putCard(reader);
+                sign.putCard(card);
             }
         }
     });

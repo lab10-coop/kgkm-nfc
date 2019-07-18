@@ -36,14 +36,12 @@ let txOpen = null;
 let txClose = null;
 
 
-async function putCard(reader) {
+async function putCard(card) {
 
 
   logSigning('putCard');
   // create both transactions
-
-  var card = new web3s2g.Security2GoCard(reader);
- 
+  
   var closeNonce = await web3.eth.getTransactionCount(await card.getAddress(1));
 
   txOpen = await card.signTransaction(web3,rawTxOpen, 1);
