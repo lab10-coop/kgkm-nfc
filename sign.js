@@ -45,7 +45,10 @@ async function putCard(card) {
   var closeNonce = await web3.eth.getTransactionCount(await card.getAddress(1));
 
   txOpen = await card.signTransaction(web3,rawTxOpen, 1);
-  txClose =  await card.signTransaction(web3,rawTxClose, 1, closeNonce + 1);
+
+  txClose = JSON.parse(JSON.stringify(rawTxClose));
+  txClose.nonce = closeNonce + 1;
+  txClose =  await card.signTransaction(web3,txClose, 1);
 
   //console.log(txClose);
   // send open
