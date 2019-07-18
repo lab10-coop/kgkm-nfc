@@ -30,9 +30,13 @@ let lastDetectedReader = false;
 
 let isShuttingDown = false;
 
-//this are known cards to shut down the system.
+//this are known cards, that can be used to shut down the system.
+//this is usefull because the GEMBird EG-PM2 stores the state of the power sockets
+//and the raspberry pi has no "shutdown" button.
+//therefore we use this card to shutdown the system.
 const terminatorCards = {
-    "0x756269ce7e0285670ecbd234f230645efba049d3" : true
+    "0x756269ce7e0285670ecbd234f230645efba049d3" : true,
+    "0x0774fe042bc23d01599b5a92b97b3125a4cb20ee" : true
 }
 
 
