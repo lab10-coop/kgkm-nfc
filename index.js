@@ -168,5 +168,5 @@ pcsc.on('error', function(err) {
     console.log('PCSC error', err.message);
 });
 
-setInterval(updateBlockchainAvailableStatus() , 5000);
+setInterval(updateBlockchainAvailableStatus, 5000);
 //test();
