@@ -50,7 +50,7 @@ async function switchPortOn(portNumber) {
     try {
         await exec(`sispmctl -o ${portNumber}`);
     } catch(error) {
-        //console.log(`Error during activating Status flag ${portNumber}:`, error);
+        console.log(`Error during activating Status flag ${portNumber}:`, error);
     }
 }
 
@@ -58,7 +58,7 @@ async function switchPortOff(portNumber) {
     try {
         await exec(`sispmctl -f ${portNumber}`);
     } catch(error) {
-        //console.log(`Error during deactivating Status flag ${portNumber}:`, error);
+        console.log(`Error during deactivating Status flag ${portNumber}:`, error);
     }
 }
 
