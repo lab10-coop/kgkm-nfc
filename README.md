@@ -45,5 +45,5 @@ See also: requirements for pcsc. https://github.com/santigimeno/node-pcsclite
 
 Example: Get the IP of the Raspberry in your Network if ssh is already enabled (you might need to adjust the IP range from 192.168.1 to yours):
 ```
-nmap -p 22 -R -sn 192.168.1.0/24
+nmap -p 22 -R 192.168.1.0/24
 ```
